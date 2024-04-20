@@ -1,39 +1,74 @@
-from moviepy.editor import VideoFileClip
+import cv2
+import numpy as np
+from ffpyplayer.player import MediaPlayer
 import os
+import tkinter as tk
 
-def play_video_segment(video_path, start_time, end_time):
-    # Load the video clip
-    video_clip = VideoFileClip(video_path)
+class VideoPlayer:
+    def __init__(self, video_folder, video_index, start_time, end_time, master = None):
+        self.video_folder = video_folder
+        self.video_index = video_index
+        self.start_time = start_time
+        self.end_time = end_time
+        self.master = master
 
-    # Extract the specified segment
-    segment_clip = video_clip.subclip(start_time, end_time)
+    def get_video_source(self, source, width, height):
+        cap = cv2.VideoCapture(source)
+        cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+        return cap
 
-    # Play the video segment
-    segment_clip.preview()
+    def play_video(self):
+        video_files = [f for f in os.listdir(self.video_folder) if f.endswith('.mp4')]
+        
+        if self.video_index < 0 or self.video_index >= len(video_files):
+            print("Invalid video index.")
+            return
+        
+        source_path = os.path.join(self.video_folder, video_files[self.video_index])
+        camera = self.get_video_source(source_path, 720, 480)
+        player = MediaPlayer(source_path)
+        
+        frame_rate = camera.get(cv2.CAP_PROP_FPS)
+        start_frame = int(self.start_time * frame_rate)
+        end_frame = int(self.end_time * frame_rate)
 
-    # Close the clips
-    video_clip.close()
-    segment_clip.close()
+        # Seek video and audio to start frames
+        camera.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
+        player.seek(self.start_time)
 
-# Function to play a video by index and segment
-def play_video_by_index(folder_path, index, start_time, end_time):
-    video_files = [f for f in os.listdir(folder_path) if f.endswith('.mp4')]
+        while True:
+            ret, frame = camera.read()
+            audio_frame, val = player.get_frame()
+        
+            if not ret or camera.get(cv2.CAP_PROP_POS_FRAMES) >= end_frame:
+                print("End of video")
+                break
 
-    if index < 0 or index >= len(video_files):
-        print("Invalid index.")
-        return
+            if camera.get(cv2.CAP_PROP_POS_FRAMES) >= start_frame:
+                frame = cv2.resize(frame, (720, 480))
+                cv2.imshow('Camera', frame)
 
-    video_path = os.path.join(folder_path, video_files[index])
+            if cv2.waitKey(20) & 0xFF == ord('q'):
+                break
 
-    # Play the segment of the video
-    play_video_segment(video_path, start_time, end_time)
+        camera.release()
+        cv2.destroyAllWindows()
 
-# Folder containing video files
-video_folder = r"Videos"
+if __name__ == "__main__":
+    video_folder = r"Videos"
+    video_index = 10  # Change this to play different videos by index
+    start_time = 1   # Start time in seconds
+    end_time = 30    # End time in seconds
 
-# Play the video at the specified index from start time to end time
-video_index = 19  # Change this to play different videos by index
-start_time = 5  # Start at 5 seconds
-end_time = 11  # End at 11 seconds
+    # root = tk.Tk()
+    # root.geometry("800x500")
+    # root.title("Video Player")
+    # frame = tk.Frame(root, bg="black")
+    # frame.pack(expand=True, fill="both")
+    
+    video_player = VideoPlayer(video_folder, video_index, start_time, end_time)
+    video_player.play_video()
 
-play_video_by_index(video_folder, video_index, start_time, end_time)
+    # root.mainloop()
+

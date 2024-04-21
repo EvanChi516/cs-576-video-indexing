@@ -47,7 +47,7 @@ class VideoPlayer:
 
             if camera.get(cv2.CAP_PROP_POS_FRAMES) >= start_frame:
                 frame = cv2.resize(frame, (720, 480))
-                cv2.imshow('Camera', frame)
+                cv2.imshow('Video Player', frame)
 
             if cv2.waitKey(20) & 0xFF == ord('q'):
                 break
@@ -57,9 +57,9 @@ class VideoPlayer:
 
 if __name__ == "__main__":
     video_folder = r"Videos"
-    video_index = 10  # Change this to play different videos by index
-    start_time = 1   # Start time in seconds
-    end_time = 30    # End time in seconds
+    video_index = 5  # Change this to play different videos by index
+    start_time = 0   # Start time in seconds
+    end_time = 10    # End time in seconds
 
     # root = tk.Tk()
     # root.geometry("800x500")

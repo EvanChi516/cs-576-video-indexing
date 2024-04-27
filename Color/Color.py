@@ -5,7 +5,7 @@ video_folder = "..\\Videos"      # Replace with path to videos folder
 video = "..\\Videos\\video1.mp4" # A single video for testing purposes
 
 def disassemble_video(video):
-    title = video
+    title = os.path.basename(video).split('\\')[-1].split('.')[0]
     vidcap = cv2.VideoCapture(video)
     success, image = vidcap.read()
     count = 0
@@ -31,12 +31,8 @@ def load_videos(video_folder):
 def main():
     disassemble_video(video)
 
-    vidcap = cv2.VideoCapture(video)
-    success, image = vidcap.read()
-    cv2.imwrite(video_folder + "\\frames\\test.jpg", image)
-    
     # frames = load_videos(video_folder)
-    # print(frames[1])
+    # print(frames[0])
 
 if __name__ == "__main__":
     main()

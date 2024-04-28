@@ -11,7 +11,7 @@ def disassemble_video(video):
     count = 0
     while success:
         # save frame as JPG file
-        cv2.imwrite(video_folder + "\\frames\\%s&%d.jpg" % (title, count), image)
+        cv2.imwrite(video_folder + "\\frames\\%s_%d.jpg" % (title, count), image)
         count += 1
         success, image = vidcap.read()
         # if(count % 1000 == 0):
@@ -20,8 +20,8 @@ def disassemble_video(video):
 def load_videos(video_folder):
     images = []
     names = []
-    for filename in os.listdir(video_folder+"\\frames"):
-        img = cv2.imread(os.path.join(video_folder, filename))
+    for filename in os.listdir(video_folder + "\\frames"):
+        img = cv2.imread(os.path.join(video_folder + "\\frames\\" + filename))
         name = str(filename)
         if img is not None:
             images.append(img),
@@ -31,8 +31,8 @@ def load_videos(video_folder):
 def main():
     disassemble_video(video)
 
-    # frames = load_videos(video_folder)
-    # print(frames[0])
+    frames = load_videos(video_folder)
+    print(frames[1])
 
 if __name__ == "__main__":
     main()

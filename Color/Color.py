@@ -1,8 +1,8 @@
 import cv2
 import os
 
-video_folder = "..\\Videos"      # Replace with path to videos folder 
-video = "..\\Videos\\video1.mp4" # A single video for testing purposes
+video_folder = "..\\Videos"      # Replace with path to videos folder
+# video = "..\\Videos\\video1.mp4" # A single video for testing purposes
 
 def disassemble_video(video):
     title = os.path.basename(video).split('\\')[-1].split('.')[0]
@@ -29,10 +29,13 @@ def load_videos(video_folder):
     return images, names
 
 def main():
-    disassemble_video(video)
 
-    frames = load_videos(video_folder)
-    print(frames[1])
+    for filename in os.listdir(video_folder):
+        if filename.split('.')[-1] == "mp4":
+            disassemble_video(video_folder + "\\" + filename)
+
+    # frames = load_videos(video_folder)
+    # print(frames[1])
 
 if __name__ == "__main__":
     main()

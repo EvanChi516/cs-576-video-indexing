@@ -16,7 +16,7 @@ def find_video_with_objects(json_file, object_confidence):
         # Iterate over each second in the video signatures
         for second, objects_detected in signatures.items():
             # Check if the objects detected string matches the given object confidence string
-            if str(objects_detected) == object_confidence:
+            if objects_detected != {} and str(objects_detected) == object_confidence:
                 start_second = int(second)
                 video_name = video
                 break  # Exit the loop once a match is found
@@ -47,4 +47,9 @@ def find_query_video(video_path):
 # print("End Second:", end_second)
 # print("Video Name:", video_name)
 
+#testing on video clip from the database
 find_query_video('ObjectCounter\\test.mp4')
+
+
+#testing on video clip from Query Video Database
+find_query_video('QueryVideos\\video1_1_modified.mp4')

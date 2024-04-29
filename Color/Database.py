@@ -16,16 +16,19 @@ def load_videos(frames_folder):
             names.append(name)
     return images, names
 
-def create_database():
-    pass
+def create_database(frames):
+    output = {}
+    for index in range(frames[1]):
+        output[frames[1][index]] = "0"
+    return output    
 
 def main():
-    # frames = load_videos(frames_folder)
+    frames = load_videos(frames_folder)
 
-    database = {"test" : "hello world"}
+    database = create_database(frames)
 
     with open(output_file, "w") as outfile:
-        outfile.write(database)
+        json.dump(database, outfile)
 
 if __name__ == "__main__":
     main()

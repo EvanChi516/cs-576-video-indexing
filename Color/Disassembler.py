@@ -19,7 +19,6 @@ def disassemble_video(video):
         #     print('Read in frame', count , success)
 
 def main():
-
     for filename in os.listdir(video_folder):
         if filename.split('.')[-1] == "mp4":
             disassemble_video(video_folder + "\\" + filename)

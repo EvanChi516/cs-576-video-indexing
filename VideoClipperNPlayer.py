@@ -5,19 +5,16 @@ from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from PIL import Image, ImageTk
 from pygame import mixer
 
-def extract_subclip():
+def extract_subclip(index, start_time, end_time):
     # Get start and end time from the entry fields
-    index = 10
-    start_time = 1
-    end_time = 21
-    path = "Videos/video"+str(index)+".mp4"
+    path = f"Videos/video{index}.mp4"
 
     # Extract subclip
     ffmpeg_extract_subclip(path, start_time, end_time, targetname="test.mp4")
     # Load and display the subclip
     open_file("test.mp4")
 
-# read the video file, load the audio file for playing
+# Read the video file, load the audio file for playing
 def open_file(filepath):
     global video, paused
     mixer.music.stop()
@@ -31,23 +28,22 @@ def open_file(filepath):
     mixer.music.pause()
     paused = True
 
-# Update the video frame by frame
+# Function to update the video frame by frame
 def video_stream():
-    global paused
+    global paused, video, root, video_label
     if paused:
-        root.after(30, video_stream) # check if the status is updated after 30ms
+        root.after(30, video_stream) # Check if the status is updated after 30ms
         return
-    is_read, frame = video.read() # read the next frame
+    is_read, frame = video.read() # Read the next frame
     if is_read:
-        frame_display = ImageTk.PhotoImage(image=Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA))) # format conversion for frame dispalying
-        video_label.config(image=frame_display) # update the frame image
-        video_label.image = frame_display # keep the frame visible
-    else: # reach the end of the video, loop the media
-        video.set(cv2.CAP_PROP_POS_FRAMES, 0)   # restart video
-        mixer.music.play()  # restart audio
+        frame_display = ImageTk.PhotoImage(image=Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA))) # Format conversion for frame displaying
+        video_label.config(image=frame_display) # Update the frame image
+        video_label.image = frame_display # Keep the frame visible
+    else: # Reach the end of the video, loop the media
+        video.set(cv2.CAP_PROP_POS_FRAMES, 0)   # Restart video
+        mixer.music.play()  # Restart audio
         paused = False
     root.after(30, video_stream)
-
 
 # Function to play/pause audio and video
 def media_play_pause():
@@ -58,25 +54,28 @@ def media_play_pause():
         mixer.music.pause()
     paused = not paused
 
+def player(index, start_time, end_time):
+    global video, paused, root, video_label
+    video = None
+    paused = True # Toggle the video play/pause (not include audio)
+    mixer.init() # Toggle the audio play/pause
 
-video = None
-paused = True # toggle the video play/pause (not inlucde audio)
-mixer.init() # toggle the audio play/pause
+    root = tk.Tk()
+    root.title("Video Player")
+    root.geometry("600x600")  # Set window dimensions (width x height)
 
-root = tk.Tk()
-root.title("Video Player")
-root.geometry("600x600")  # Set window dimensions (width x height)
+    # Button to extract subclip and play
+    extract_button = tk.Button(root, text="Extract", command=lambda: extract_subclip(index, start_time, end_time), padx=10, pady=5)
+    extract_button.pack()
 
-# Button to extract subclip and play
-extract_button = tk.Button(root, text="Extract", command=extract_subclip, padx=10, pady=5)
-extract_button.pack()
+    video_label = tk.Label(root)
+    video_label.pack(expand=True, fill="both")
 
-video_label = tk.Label(root)
-video_label.pack(expand=True, fill="both")
+    # Button to play/pause audio and video
+    play_button = tk.Button(root, text="Play/Pause", command=media_play_pause, padx=10, pady=5)
+    play_button.pack()
 
-# Button to play/pause audio and video
-play_button = tk.Button(root, text="Play/Pause", command=media_play_pause, padx=10, pady=5)
-play_button.pack()
+    video_stream()
+    root.mainloop()
 
-video_stream()
-root.mainloop()
+# player(1,540,570)

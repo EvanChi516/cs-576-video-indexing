@@ -8,18 +8,19 @@ input_folder = "..\\Videos\\frames"         # Path to folder with input frames
 output_folder = "..\\Videos\\database"      # Path to output folder
 
 def load_frame(frame_name):
+    # Reads image and quantizes colors
     img = cv2.imread(frame_name[2]) & (0b11111000)
-
-    a2D = img.reshape(-1, img.shape[-1])
+    # Reshape
+    r_img = img.reshape(-1, img.shape[-1])
     col_range = (256, 256, 256)
-    a1D = np.ravel_multi_index(a2D.T, col_range)
-    
-    return np.unravel_index(np.bincount(a1D).argmax(), col_range)
+    rmi = np.ravel_multi_index(r_img.T, col_range)
+    # Returns most common color
+    return np.unravel_index(np.bincount(rmi).argmax(), col_range)
 
 def main():
-
     videos = {}
-
+    # Unfortunately, hard coded because of time
+    # Creates the database
     for i in range(1,21):
         videos["video"+str(i)] = {"red": {}, "green": {}, "blue": {}}
 

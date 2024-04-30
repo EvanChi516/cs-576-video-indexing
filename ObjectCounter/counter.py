@@ -21,7 +21,7 @@ def generate_video_signature(video_path):
     net.setInputMean((127.5, 127.5, 127.5))
     net.setInputSwapRB(True)
 
-    video_signature = {}  # Dictionary to store objects detected per second
+    total_objects_count = {}  # Dictionary to store total count of objects detected
 
     while True:
         success, img = cap.read()
@@ -29,38 +29,33 @@ def generate_video_signature(video_path):
             break  # Break out of the loop if there are no more frames to read
         
         frame_count += 1
-        second = int(frame_count / frame_rate) + 1  # Calculate the current second
         
-        classIds, confs, bbox = net.detect(img, confThreshold=thres)
+        classIds, _, bbox = net.detect(img, confThreshold=thres)
 
-        frame_objects = {}  # Dictionary to store objects detected in the current frame
-        
         if len(classIds) != 0:
-            for classId, confidence, box in zip(classIds.flatten(), confs.flatten(), bbox):
+            for classId in classIds.flatten():
                 className = classNames[classId - 1].upper()
                 
-                # Add the detected object and its confidence to the dictionary
-                if className in frame_objects:
-                    frame_objects[className].append(confidence)
+                # Increment the count for the detected object class
+                if className in total_objects_count:
+                    total_objects_count[className] += 1
                 else:
-                    frame_objects[className] = [confidence]
+                    total_objects_count[className] = 1
                 
                 # Draw bounding boxes and labels on the image
-                cv2.rectangle(img, box, color=(0, 255, 0), thickness=2)
-                cv2.putText(img, className, (box[0] + 10, box[1] + 30), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
-                cv2.putText(img, str(round(confidence * 100, 2)), (box[0] + 200, box[1] + 30), cv2.FONT_HERSHEY_COMPLEX, 1,
-                            (0, 255, 0), 2)
-
-        # Update the video signature with objects detected in the current second
-        video_signature[second] = frame_objects
+                for classId, box in zip(classIds.flatten(), bbox):
+                    cv2.rectangle(img, box, color=(0, 255, 0), thickness=2)
+                    cv2.putText(img, classNames[classId-1].upper(), (box[0] + 10, box[1] + 30), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
 
         # Display the processed frame
         cv2.imshow("Output", img)
         cv2.waitKey(1)
 
-    return video_signature
+    return total_objects_count
 
-# Example usage:
-# video_path = 'ObjectCounter\\test.mp4'
-# signature = generate_video_signature(video_path)
+# # Example usage:
+# signature = generate_video_signature('Videos\\video3.mp4')
+# print("Video Signature:", signature)
+
+# signature = generate_video_signature('QueryVideos\\video3_1_modified.mp4')
 # print("Video Signature:", signature)

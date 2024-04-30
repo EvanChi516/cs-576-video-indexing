@@ -15,16 +15,12 @@ database_signatures = {}
 for video_file in os.listdir(video_dir):
     if video_file.endswith('.mp4'):  # Assuming all video files have the extension .mp4
         video_path = os.path.join(video_dir, video_file)
+        print(video_path)
         signature = generate_video_signature(video_path)
-        
-        # Convert values to strings
-        signature = {key: {k: [str(val) for val in v] if isinstance(v, np.ndarray) else str(v) for k, v in value.items()} 
-                     for key, value in signature.items()}
-        
         database_signatures[video_file] = signature
 
 # Save the database signatures to a JSON file
-output_file = 'ObjectCounter\\database_signatures.json'
+output_file = 'ObjectCounter\\database_signatures_1.json'
 with open(output_file, 'w') as f:
     json.dump(database_signatures, f)
 

@@ -7,9 +7,9 @@ from pygame import mixer
 
 def extract_subclip():
     # Get start and end time from the entry fields
-    index = 1
-    start_time = 540
-    end_time = 570
+    index = 10
+    start_time = 1
+    end_time = 21
     path = "Videos/video"+str(index)+".mp4"
 
     # Extract subclip

@@ -3,7 +3,7 @@ import os
 import json
 import numpy as np
 
-query_video = "..\\Queries\\video4_1_modified.mp4"
+query_video = "..\\Queries\\video2_1_modified.mp4"
 database_folder = "..\\Videos\\database"
 
 def get_color(vidcap):
@@ -24,14 +24,14 @@ def get_frames(video, color):
     return set(red_frames) & set(green_frames) & set(blue_frames)
 
 def main():
-    video = database_folder + "\\video4.json"
+    video = database_folder + "\\video2.json"
     vidcap = cv2.VideoCapture(query_video)
 
     color = get_color(vidcap)
     print(color)
 
     frames = get_frames(video, color)
-    print(frames)
+    print(sorted(frames))
 
 if __name__ == "__main__":
     main()

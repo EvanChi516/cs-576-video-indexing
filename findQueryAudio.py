@@ -61,24 +61,26 @@ def process_query(query_audio_path, database_path):
     match_index, frame_index, score = find_best_match(query_mfcc, database, 2)
     
     # Calculate the start and end times of the matched segment
-    start_time = query_audio_time(frame_index, sr, int(0.10*sr))
-    end_time = query_audio_time(frame_index + query_mfcc.shape[1], sr, int(0.10*sr))
+    start_time = int(query_audio_time(frame_index, sr, int(0.10*sr)))
+    end_time = int(query_audio_time(frame_index + query_mfcc.shape[1], sr, int(0.10*sr)))
     
     print(f"Video Index: {match_index + 1}")
 
     print(f"Start Time: {start_time:.2f} sec")
+    start_min = int(start_time // 60)
+    start_sec = int(start_time % 60)
+    print(f"Start Timestamp: {start_min} min {start_sec} sec")
     # print(f"End Time: {end_time:.2f} sec")
+    print(f"Duration: {end_time - start_time} sec")
     print(f"Start Frame: {int(start_time*30)} frame")
 
     match_index += 1
 
     return match_index, start_time, end_time
-    # # sec min format
-    # start_min = int(start_time // 60)
-    # start_sec = int(start_time % 60)
+    # sec min format
+    
     # end_min = int(end_time // 60)
     # end_sec = int(end_time % 60)
-    # print(f"Start Time: {start_min} min {start_sec} sec")
     # print(f"End Time: {end_min} min {end_sec} sec")
 
 # Example usage

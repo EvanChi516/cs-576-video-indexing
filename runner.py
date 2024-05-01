@@ -8,7 +8,7 @@ def main(query_video, query_audio):
     #audio proceesing method
     database_path = 'audio_mfcc_database.pkl'
     index, start_time, end_time = process_query(query_audio,database_path)
-    player(index, int(start_time), int(end_time))
+    player(index, start_time, end_time)
 
     pass
 
@@ -18,7 +18,7 @@ if __name__ == "__main__":
         print("Usage: python your_script.py query_video query_audio")
         sys.exit(1)
     
-    # Extract command-line arguments
+    # Extract command-line arguments/
     video_path = sys.argv[1]
     query_path = sys.argv[2]
     
